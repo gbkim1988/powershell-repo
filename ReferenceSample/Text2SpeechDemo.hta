@@ -1,0 +1,93 @@
+<html>
+<title>Text2Speech Demo</title>
+<!
+ Wayne Lindimore
+ wlindimore@gmail.com
+ AdminsCache.Wordpress.com
+>
+<head>
+<HTA:APPLICATION
+ APPLICATIONNAME="Text2Speech Demo"
+ SCROLL="no"
+ SINGLEINSTANCE="yes"
+ WINDOWSTATE="normal">
+</head>
+
+<style>
+body {
+	background-color: lightgray;
+	font-size: 8pt; }
+.button {
+	Width: 75px;
+	height: 23px;
+	font-size: 8pt; }
+select.FixedWidth {
+	Width: 121px;
+	font-size: 8pt; }
+</style>
+
+<script language="VBScript">
+Sub Window_OnLoad()
+	window.resizeTo 546,251
+
+	' Rate ComboBox
+	For i = -10 to 10
+		Set objOption = Document.createElement("OPTION")
+		objOption.Text = i
+		objOption.Value = i
+		ComboBoxRate.Add(objOption)
+	Next
+	ComboBoxRate.SelectedIndex = 10
+	
+	' Volume ComboBox
+	For i = 0 to 100 Step 5
+		Set objOption = Document.createElement("OPTION")
+		objOption.Text = i
+		objOption.Value = i
+		ComboBoxVol.Add(objOption)
+	Next
+	ComboBoxVol.SelectedIndex = 20
+	
+	' Voice ComboBox	
+	Set objVoice = CreateObject("SAPI.SpVoice") 
+	Set VoiceList = objVoice.GetVoices
+	Count = VoiceList.Count-1
+	For i = 0 to Count
+		Set objOption = Document.createElement("OPTION")
+		objOption.Text = VoiceList.Item(i).GetDescription 
+		objOption.Value = "Name=" & VoiceList.Item(i).GetDescription 
+		ComboBoxVoice.Add(objOption)
+	Next
+	ComboBoxVoice.SelectedIndex = 0
+End Sub
+
+Function SpeakButton()
+	Text2Speak = Text.Value
+	Set objVoice = CreateObject("SAPI.SpVoice") 
+	objVoice.Rate = ComboBoxRate.Value
+	objVoice.Volume = ComboBoxVol.Value
+	VoiceNumber = ComboBoxVoice.SelectedIndex
+	Set objVoice.Voice = objVoice.GetVoices.Item(VoiceNumber)
+	objVoice.Speak(Text2Speak)
+End Function
+
+Function ExitButton()
+	Window.close
+End Function
+</script>
+
+<body>
+<font face="Sans Serif" size=-1>
+<b><div style="top: 11; left: 208; position: absolute; z-index: 1; visibility: show;"><font size="3"><center>Text2Speech Demo</font size></center></div></b>
+<div style="top: 44; left: 44; position: absolute; z-index: 1; visibility: show;">Text</div>
+<Input type="text" Name="Text" style="position: absolute; left: 44px; top: 63px; width: 452px;"/>
+<div style="top: 102; left: 44; position: absolute; z-index: 1; visibility: show;">Rate</div>
+<Select size="1" class="FixedWidth" Name="ComboBoxRate" style="position: absolute; left: 44px; top: 123px;"></Select>
+<div style="top: 102; left: 208; position: absolute; z-index: 1; visibility: show;">Voice</div>
+<Select size="0" class="FixedWidth" Name="ComboBoxVoice" style="position: absolute; left: 206px; top: 123px;"></Select>
+<div style="top: 102; left: 375; position: absolute; z-index: 1; visibility: show;">Volume</div>
+<Select size="1" class="FixedWidth" Name="ComboBoxVol" style="position: absolute; left: 375px; top: 123px;"></Select>
+<Input class="button" Type=BUTTON value="Speak" Name="btnSpeak" style="position: absolute; left: 316px; top: 177px;" onClick="SpeakButton()">
+<Input class="button" Type=BUTTON value="Exit" Name="btnExit" style="position: absolute; left: 421px; top: 177px;" onClick="ExitButton()">
+</body>
+</html>
