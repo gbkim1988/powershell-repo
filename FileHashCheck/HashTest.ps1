@@ -12,10 +12,14 @@ $sha1 = New-Object -TypeName System.Security.Cryptography.sha256cryptoservicepro
 foreach ( $drive in $DriverList ){
     Write-Host -f Green "Searching ", $_.Root
     try{
-        Get-ChildItem $drive.Root -include *.exe,*.dll -r | % { $_.FullName} | foreach {
-            Write-Host -f Red $_ 
+        Get-ChildItem $drive.Root -include *.exe,*.dll -r | % { $_.FullName} | ForEach-Object {
+            #Write-Host -f Red $_ 
             $filehash = [System.BitConverter]::ToString($sha1.ComputeHash([System.IO.File]::ReadAllBytes($_))) -replace '-',''
-            Write-Host -f Green $filehash
+            #$filehash
+            New-Object PSObject -Property @{ 
+                FileName = $_
+                SHA1 = $filehash
+            } | Select-Object -Property $properties 
         } 
     }catch [PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand]{
         Write-Host "error"
